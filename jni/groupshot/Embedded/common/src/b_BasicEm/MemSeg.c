@@ -17,6 +17,7 @@
 /* ---- includes ----------------------------------------------------------- */
 
 #include "b_BasicEm/MemSeg.h"
+#include <stdlib.h>
 #include "b_BasicEm/Functions.h"
 #include "b_BasicEm/Context.h"
 

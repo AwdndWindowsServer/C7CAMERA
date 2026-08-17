@@ -17,6 +17,7 @@
 /* ---- includes ----------------------------------------------------------- */
 
 #include "b_TensorEm/Cluster3D.h"
+#include <stdlib.h>
 #include "b_BasicEm/Math.h"
 #include "b_BasicEm/Memory.h"
 #include "b_BasicEm/Functions.h"

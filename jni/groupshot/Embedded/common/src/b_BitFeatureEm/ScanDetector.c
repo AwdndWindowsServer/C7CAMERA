@@ -17,6 +17,7 @@
 /* ---- includes ----------------------------------------------------------- */
 
 #include "b_BasicEm/Functions.h"
+#include <stdlib.h>
 #include "b_BasicEm/Math.h"
 #include "b_BitFeatureEm/ScanDetector.h"
 

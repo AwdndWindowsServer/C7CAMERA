@@ -17,6 +17,7 @@
 /* ---- includes ----------------------------------------------------------- */
 
 #include "b_BasicEm/Functions.h"
+#include <stdlib.h>
 #include "b_BasicEm/Context.h"
 #include "b_BasicEm/String.h"
 

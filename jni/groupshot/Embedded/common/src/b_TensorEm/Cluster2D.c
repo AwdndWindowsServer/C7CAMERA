@@ -17,6 +17,7 @@
 /* ---- includes ----------------------------------------------------------- */
 
 #include "b_TensorEm/Cluster2D.h"
+#include <stdlib.h>
 #include "b_TensorEm/RBFMap2D.h"
 #include "b_BasicEm/Math.h"
 #include "b_BasicEm/Memory.h"

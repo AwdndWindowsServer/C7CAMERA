@@ -104,8 +104,8 @@ include $(MY_CORE_PATH)/movingobjects/Android.mk
 # Sequence photo plugin
 #include $(MY_CORE_PATH)/sequence/Android.mk
 
-# Group shot plugin
-include $(MY_CORE_PATH)/groupshot/Android.mk
+# Group shot plugin (disabled: depends on Android framework libs nativehelper/skia/cutils)
+#include $(MY_CORE_PATH)/groupshot/Android.mk
 
 # Panorama plugin
 include $(MY_CORE_PATH)/panorama/Android.mk
