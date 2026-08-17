@@ -8,13 +8,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      JAVA_HOME_8: /opt/hostedtoolcache/Java_Temurin-Hotspot_jdk/8.0.502-7/x64
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up JDK 8
+      - name: Set up JDK 17 (for sdkmanager)
         uses: actions/setup-java@v4
         with:
-          java-version: '8'
+          java-version: '17'
           distribution: 'temurin'
 
       - name: Setup Android SDK & NDK
@@ -22,11 +24,21 @@ jobs:
         with:
           packages: 'platforms;android-23 build-tools;23.0.3 build-tools;29.0.2 ndk;16.1.4479499'
 
-      - name: Accept NDK licenses
-        run: yes | sdkmanager --licenses || true
+      - name: Set up JDK 8 (for Gradle/NDK build)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+
+      - name: Generate local.properties
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          echo "ndk.dir=$ANDROID_HOME/ndk/16.1.4479499" >> local.properties
 
       - name: Build debug APK
-        run: ./gradlew assembleDebug --no-daemon --stacktrace
+        run: |
+          export JAVA_HOME=$JAVA_HOME_8_X64
+          ./gradlew assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK
         uses: actions/upload-artifact@v4

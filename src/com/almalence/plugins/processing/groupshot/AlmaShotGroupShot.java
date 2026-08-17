@@ -117,8 +117,9 @@ public final class AlmaShotGroupShot
 
 	static
 	{
-		System.loadLibrary("utils-image");
-		System.loadLibrary("almalib");
-		System.loadLibrary("almashot-seamless");
+		// Disabled: almashot-seamless depends on Android framework libs not in NDK
+		// System.loadLibrary("utils-image");
+		// System.loadLibrary("almalib");
+		// System.loadLibrary("almashot-seamless");
 	}
 }
