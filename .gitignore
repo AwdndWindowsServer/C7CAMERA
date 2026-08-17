@@ -1,0 +1,7 @@
+build/
+.gradle/
+.externalNativeBuild/
+local.properties
+*.apk
+*.iml
+.idea/
