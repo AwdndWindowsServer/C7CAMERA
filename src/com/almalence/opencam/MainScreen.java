@@ -2145,9 +2145,6 @@ public class MainScreen extends ApplicationScreen
 			Toast toast = Toast.makeText(thiz, left, Toast.LENGTH_LONG);
 			toast.setGravity(Gravity.CENTER, 0, 0);
 			toast.show();
-
-			if ((1 == launchesLeft) || (2 == launchesLeft) || (3 == launchesLeft))
-				// show internal store
 		}
 		return true;
 	}
