@@ -158,11 +158,9 @@ public class MainScreen extends ApplicationScreen
 
 	public static final String	EXTRA_TORCH						= "WidgetTorchMode";
 	public static final String	EXTRA_BARCODE					= "WidgetBarcodeMode";
-	public static final String	EXTRA_SHOP						= "WidgetGoShopping";
 
 	private static boolean		launchTorch						= false;
 	private static boolean		launchBarcode					= false;
-	private static boolean		goShopping						= false;
 
 	private static int			prefFlash						= -1;
 	private static boolean		prefBarcode						= false;
@@ -384,22 +382,6 @@ public class MainScreen extends ApplicationScreen
 		PluginManager.getInstance().setupDefaultMode();
 		// init gui manager
 		guiManager = new AlmalenceGUI();
-
-		Intent intent = this.getIntent();
-		goShopping = intent.getBooleanExtra(EXTRA_SHOP, false);
-
-		// <!-- -+-
-		if (goShopping)
-		{
-			if (titleUnlockAll == null || titleUnlockAll.endsWith("check for sale"))
-			{
-				Toast.makeText(MainScreen.getMainContext(),
-						"Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
-				return;
-			}
-			guiManager.showStore();
-		}
-		// -+- -->
 	}
 	
 	@Override
@@ -1602,14 +1584,6 @@ public class MainScreen extends ApplicationScreen
 			return true;
 		}
 
-		// <!-- -+-
-		if (((RelativeLayout) guiManager.getMainView().findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
-		{
-			guiManager.hideStore();
-			return true;
-		}
-		// -+- -->
-
 		if (PluginManager.getInstance().onKeyDown(true, keyCode, event))
 			return true;
 		if (guiManager.onKeyDown(true, keyCode, event))
@@ -2005,9 +1979,6 @@ public class MainScreen extends ApplicationScreen
 					Editor prefsEditor = prefs.edit();
 					prefsEditor.putBoolean("unlock_all_forever", true).commit();
 					dialog.dismiss();
-					guiManager.hideStore();
-					showPromoRedeemed = true;
-					guiManager.showStore();
 				} else
 				{
 					editText.setText("");
@@ -2152,9 +2123,6 @@ public class MainScreen extends ApplicationScreen
 			toast.setGravity(Gravity.CENTER, 0, 0);
 			toast.show();
 
-			// show google store with paid version
-			callStoreForUnlocked(MainScreen.thiz);
-
 			return false;
 		} else if (5 >= launchesLeft)
 		{
@@ -2184,53 +2152,6 @@ public class MainScreen extends ApplicationScreen
 
 	private static void showSubscriptionDialog()
 	{
-		final float density = thiz.getResources().getDisplayMetrics().density;
-
-		LinearLayout ll = new LinearLayout(thiz);
-		ll.setOrientation(LinearLayout.VERTICAL);
-		ll.setPadding((int) (10 * density), (int) (10 * density), (int) (10 * density), (int) (10 * density));
-
-		ImageView img = new ImageView(thiz);
-		img.setImageDrawable(ApplicationScreen.getAppResources().getDrawable(R.drawable.store_subscription));
-		img.setAdjustViewBounds(true);
-		ll.addView(img);
-
-		TextView tv = new TextView(thiz);
-		tv.setText(MainScreen.getAppResources().getString(R.string.subscriptionText));
-		tv.setWidth((int) (250 * density));
-		tv.setPadding((int) (4 * density), 0, (int) (4 * density), (int) (24 * density));
-		ll.addView(tv);
-
-		Button bNo = new Button(thiz);
-		bNo.setText(MainScreen.getAppResources().getString(R.string.subscriptionNoText));
-		ll.addView(bNo);
-
-		Button bSubscribe = new Button(thiz);
-		bSubscribe.setText(MainScreen.getAppResources().getString(R.string.subscriptionYesText));
-		ll.addView(bSubscribe);
-
-		final AlertDialog.Builder builder = new AlertDialog.Builder(thiz);
-		builder.setView(ll);
-		final AlertDialog dialog = builder.create();
-
-		bSubscribe.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View v)
-			{
-				purchasedUnlockAllSubscriptionYear();
-				dialog.dismiss();
-			}
-		});
-
-		bNo.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View v)
-			{
-				dialog.dismiss();
-			}
-		});
-
-		dialog.show();
 	}
 
 	private boolean isABCUnlockedInstalled(Activity activity)

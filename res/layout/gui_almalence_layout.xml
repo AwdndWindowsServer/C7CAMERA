@@ -663,42 +663,6 @@
             android:verticalSpacing="7dp" />
     </RelativeLayout>
 
-    <com.almalence.ui.RotateImageView
-        android:id="@+id/Unlock"
-        android:layout_width="40dip"
-        android:layout_height="40dip"
-        android:layout_gravity="top|left"
-        android:layout_marginTop="130dip"
-        android:background="@android:color/transparent"
-        android:src="@drawable/unlock"
-        android:visibility="gone" />
-
-    <RelativeLayout
-        android:id="@+id/viewPagerLayoutMain"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/store_background"
-        android:visibility="gone" >
-
-        <ImageView
-            android:id="@+id/storeHeader"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/headerStoreImageSize"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:background="@android:color/transparent"
-            android:src="@drawable/store_header" >
-        </ImageView>
-
-        <RelativeLayout
-            android:id="@+id/viewPagerLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@+id/storeHeader"
-            android:background="@drawable/store_background" >
-        </RelativeLayout>
-    </RelativeLayout>
-
     <!-- -+-  -->
 
     <com.almalence.ui.Panel

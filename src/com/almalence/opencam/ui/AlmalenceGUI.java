@@ -183,7 +183,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	private boolean											modeSelectorVisible			= false;
 	// If quick settings layout is showing now
 
-	private AlmalenceStore									store;
 	private ImageSizeQuickSetting							imageSizeQuickSetting;
 	private ColorEffectQuickSetting							collorEffectQuickSetting;
 
@@ -1249,27 +1248,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				}
 			}
 		});
-
-		// <!-- -+-
-		RotateImageView unlock = ((RotateImageView) guiView.findViewById(R.id.Unlock));
-		unlock.setOnClickListener(new OnClickListener()
-		{
-			public void onClick(View v)
-			{
-				if (guiView.findViewById(R.id.postprocessingLayout).getVisibility() == View.VISIBLE)
-					return;
-
-				if (MainScreen.titleUnlockAll == null || MainScreen.titleUnlockAll.endsWith("check for sale"))
-				{
-					Toast.makeText(MainScreen.getMainContext(),
-							"Error connecting to Google Play. Check internet connection.", Toast.LENGTH_LONG).show();
-					return;
-				}
-				// start store
-				showStore();
-			}
-		});
-		// -+- -->
 	}
 
 	
@@ -1365,8 +1343,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 					manualControlsLayout.setRotation(AlmalenceGUI.mDeviceOrientation);
 				}
 
-				store.setOrientation();
-				
 				AlmalenceGUI.mPreviousDeviceOrientation = AlmalenceGUI.mDeviceOrientation;
 
 				ApplicationScreen.getPluginManager().onOrientationChanged(getDisplayOrientation());
@@ -1423,9 +1399,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		if (settingsControlsVisible)
 			((Panel) guiView.findViewById(R.id.topPanel)).setOpen(false, true);
 
-		if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
-			hideStore();
-
 		lockControls = false;
 		guiView.findViewById(R.id.buttonGallery).setEnabled(true);
 		guiView.findViewById(R.id.buttonShutter).setEnabled(true);
@@ -1452,13 +1425,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 	@Override
 	public void showStore()
 	{
-		store.showStore();
 	}
 
 	@Override
 	public void hideStore()
 	{
-		store.hideStore();
 	}
 
 	@Override
@@ -1654,30 +1625,11 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		imageSizeQuickSetting = new ImageSizeQuickSetting(MainScreen.getInstance());
 		collorEffectQuickSetting = new ColorEffectQuickSetting(MainScreen.getInstance());
 
-		store = new AlmalenceStore(guiView);
-		// <!-- -+-
-		manageUnlockControl();
-		// -+- -->
-
 		// Sony remote camera
 		sonyCameraDeviceExplorer = new SonyCameraDeviceExplorer(guiView);
 		// -- Sony remote camera
 	}
 
-	// <!-- -+-
-	private void manageUnlockControl()
-	{
-		// manage unlock control
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ApplicationScreen.getMainContext());
-		if (prefs.getBoolean("unlock_all_forever", false))
-			store.HideUnlockControl();
-		else
-		{
-			store.ShowUnlockControl();
-		}
-	}
-
-	// -+- -->
 
 	private Map<Integer, View> initCameraParameterModeButtons(Map<Integer, Integer> icons_map,
 			Map<Integer, String> names_map, Map<Integer, View> paramMap, final int mode)
@@ -7923,12 +7875,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 				res++;
 				guiView.findViewById(R.id.topPanel).setVisibility(View.VISIBLE);
 				quickControlsVisible = false;
-			}
-
-			if (((RelativeLayout) guiView.findViewById(R.id.viewPagerLayoutMain)).getVisibility() == View.VISIBLE)
-			{
-				hideStore();
-				res++;
 			}
 		}
 
