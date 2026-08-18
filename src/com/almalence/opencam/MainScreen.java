@@ -1844,7 +1844,6 @@ public class MainScreen extends ApplicationScreen
 	{
 		// Billing removed
 	}
-	}
 
 	public static String						titleUnlockAll				= "$6.95";
 	public static String						titleUnlockAllCoupon		= "$3.95";
