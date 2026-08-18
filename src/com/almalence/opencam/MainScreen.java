@@ -1974,7 +1974,6 @@ public class MainScreen extends ApplicationScreen
 			public void onClick(View v)
 			{
 				String promo = editText.getText().toString();
-				boolean matchPromo = false;
 
 				// /////////////////////////////////////////////////////
 				// juliusapp promotion
