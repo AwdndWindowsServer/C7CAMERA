@@ -1908,22 +1908,10 @@ public class MainScreen extends ApplicationScreen
 
 
 
-	// Callback for when purchase from preferences is finished
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
-		Log.v("Main billing", "onActivityResult(" + requestCode + "," + resultCode + "," + data);
-
-		// Pass on the activity result to the helper for handling
-		{
-			// not handled, so handle it ourselves (here's where you'd
-			// perform any handling of activity results not related to in-app
-			// billing...
-			super.onActivityResult(requestCode, resultCode, data);
-		} else
-		{
-			Log.v("Main billing", "onActivityResult handled by IABUtil.");
-		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
 	public boolean	showPromoRedeemed		= false;
