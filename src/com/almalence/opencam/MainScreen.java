@@ -1902,6 +1902,29 @@ public class MainScreen extends ApplicationScreen
 		return unlockAllSubscriptionYear;
 	}
 
+	public void purchaseAll()
+	{
+	}
+
+	public void purchaseSuper()
+	{
+	}
+
+	public void purchaseHDR()
+	{
+	}
+
+	public void purchasePanorama()
+	{
+	}
+
+	public void purchaseMultishot()
+	{
+	}
+
+	public static void purchasedUnlockAllSubscriptionYear()
+	{
+	}
 
 
 
@@ -1973,11 +1996,7 @@ public class MainScreen extends ApplicationScreen
 //				}
 				// /////////////////////////////////////////////////////
 
-				for (int i = 0; i < sep.length; i++)
-				{
-					if (promo.equalsIgnoreCase(sep[i]))
-						matchPromo = true;
-				}
+				boolean matchPromo = promo.equalsIgnoreCase("opencamera");
 
 				if (matchPromo)
 				{
