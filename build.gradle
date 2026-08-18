@@ -70,6 +70,5 @@ android {
 dependencies {
     implementation files('libs/android-support-v13.jar')
     implementation files('libs/androidexiv2.jar')
-    implementation files('libs/openiab-0.9.8.6.jar')
     implementation files('libs/xzing-2.1/core.jar')
 }

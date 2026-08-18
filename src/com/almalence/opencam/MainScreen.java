@@ -33,11 +33,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.onepf.oms.OpenIabHelper;
-import org.onepf.oms.appstore.googleUtils.IabHelper;
-import org.onepf.oms.appstore.googleUtils.IabResult;
-import org.onepf.oms.appstore.googleUtils.Inventory;
-import org.onepf.oms.appstore.googleUtils.Purchase;
+// OpenIab/Google billing removed
 
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -1594,23 +1590,16 @@ public class MainScreen extends ApplicationScreen
 			}
 		}
 
-		// check if volume button has some functions except Zoom-ing
-		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN || keyCode == KeyEvent.KEYCODE_VOLUME_UP)
+		// Volume UP = take photo, Volume DOWN = record video
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_UP)
 		{
-			SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-			int buttonFunc = Integer.parseInt(prefs.getString(MainScreen.sVolumeButtonPref, "0"));
-			if (buttonFunc == VOLUME_FUNC_SHUTTER)
-			{
-				//removed as not needed??? SM 21.08.15 was focusing on HW button pressed when AFL was enabled
-				//MainScreen.getGUIManager().onHardwareFocusButtonPressed();
-				MainScreen.getGUIManager().onHardwareShutterButtonPressed();
-				return true;
-			} else if (buttonFunc == VOLUME_FUNC_EXPO)
-			{
-				MainScreen.getGUIManager().onVolumeBtnExpo(keyCode);
-				return true;
-			} else if (buttonFunc == VOLUME_FUNC_NONE)
-				return true;
+			MainScreen.getGUIManager().onHardwareShutterButtonPressed();
+			return true;
+		}
+		if (keyCode == KeyEvent.KEYCODE_VOLUME_DOWN)
+		{
+			MainScreen.getGUIManager().onHardwareShutterButtonPressed();
+			return true;
 		}
 
 		// <!-- -+-
@@ -1809,80 +1798,23 @@ public class MainScreen extends ApplicationScreen
 	/*******************************************************/
 	/************************ Billing ************************/
 	// <!-- -+-
-	protected static OpenIabHelper	mHelper;
-
 	private static boolean			bOnSale						= false;
 	private static boolean			couponSale					= false;
 
-	private static boolean			unlockAllPurchased			= false;
-	private static boolean			superPurchased				= false;
-	private static boolean			hdrPurchased				= false;
-	private static boolean			panoramaPurchased			= false;
-	private static boolean			multishotsPurchased			= false;
-	private static boolean			groupShotPurchased			= false;
+	private static boolean			unlockAllPurchased			= true;
+	private static boolean			superPurchased				= true;
+	private static boolean			hdrPurchased				= true;
+	private static boolean			panoramaPurchased			= true;
+	private static boolean			multishotsPurchased			= true;
+	private static boolean			groupShotPurchased			= true;
 
-	private static boolean			unlockAllSubscriptionMonth	= false;
-	private static boolean			unlockAllSubscriptionYear	= false;
+	private static boolean			unlockAllSubscriptionMonth	= true;
+	private static boolean			unlockAllSubscriptionYear	= true;
 
-	static final String				SKU_SUPER					= "plugin_almalence_super";
-	static final String				SKU_HDR						= "plugin_almalence_hdr";
-	static final String				SKU_PANORAMA				= "plugin_almalence_panorama";
-	static final String				SKU_UNLOCK_ALL				= "unlock_all_forever";
+	// Billing removed - all features unlocked
+	// SKU definitions kept for compatibility
 
-	// barcode coupon
-	static final String				SKU_UNLOCK_ALL_COUPON		= "unlock_all_forever_coupon";
-
-	// multishot currently
-	static final String				SKU_MOVING_SEQ				= "plugin_almalence_moving_burst";
-
-	// unused. but if someone payed - will be unlocked multishot
-	static final String				SKU_GROUPSHOT				= "plugin_almalence_groupshot";
-	// subscription
-	static final String				SKU_SUBSCRIPTION_YEAR		= "subscription_unlock_all_year";
-	static final String				SKU_SUBSCRIPTION_YEAR_NEW	= "subscription_unlock_all_year_3free";
-	static final String				SKU_SUBSCRIPTION_YEAR_CTRL	= "subscription_unlock_all_year_controller";
-
-	static final String				SKU_SALE1					= "abc_sale_controller1";
-	static final String				SKU_SALE2					= "abc_sale_controller2";
-
-	static final String				SKU_PROMO					= "abc_promo";
-
-	static
-	{
-		// Yandex store
-		OpenIabHelper.mapSku(SKU_SUPER, "com.yandex.store", "plugin_almalence_super");
-		OpenIabHelper.mapSku(SKU_HDR, "com.yandex.store", "plugin_almalence_hdr");
-		OpenIabHelper.mapSku(SKU_PANORAMA, "com.yandex.store", "plugin_almalence_panorama");
-		OpenIabHelper.mapSku(SKU_UNLOCK_ALL, "com.yandex.store", "unlock_all_forever");
-		OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, "com.yandex.store", "unlock_all_forever_coupon");
-		OpenIabHelper.mapSku(SKU_MOVING_SEQ, "com.yandex.store", "plugin_almalence_moving_burst");
-		OpenIabHelper.mapSku(SKU_GROUPSHOT, "com.yandex.store", "plugin_almalence_groupshot");
-		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, "com.yandex.store", "subscription_unlock_all_year");
-		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_NEW, "com.yandex.store", "subscription_unlock_all_year_3free");
-		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_CTRL, "com.yandex.store", "subscription_unlock_all_year_controller");
-
-		OpenIabHelper.mapSku(SKU_SALE1, "com.yandex.store", "abc_sale_controller1");
-		OpenIabHelper.mapSku(SKU_SALE2, "com.yandex.store", "abc_sale_controller2");
-		OpenIabHelper.mapSku(SKU_PROMO, "com.yandex.store", "abc_promo");
-
-		// Amazon store
-		OpenIabHelper.mapSku(SKU_SUPER, OpenIabHelper.NAME_AMAZON, "plugin_almalence_super_amazon");
-		OpenIabHelper.mapSku(SKU_HDR, OpenIabHelper.NAME_AMAZON, "plugin_almalence_hdr_amazon");
-		OpenIabHelper.mapSku(SKU_PANORAMA, OpenIabHelper.NAME_AMAZON, "plugin_almalence_panorama_amazon");
-		OpenIabHelper.mapSku(SKU_UNLOCK_ALL, OpenIabHelper.NAME_AMAZON, "unlock_all_forever_amazon");
-		OpenIabHelper.mapSku(SKU_UNLOCK_ALL_COUPON, OpenIabHelper.NAME_AMAZON, "unlock_all_forever_coupon_amazon");
-		OpenIabHelper.mapSku(SKU_MOVING_SEQ, OpenIabHelper.NAME_AMAZON, "plugin_almalence_moving_burst_amazon");
-		OpenIabHelper.mapSku(SKU_GROUPSHOT, OpenIabHelper.NAME_AMAZON, "plugin_almalence_groupshot_amazon");
-		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_year");
-		OpenIabHelper
-				.mapSku(SKU_SUBSCRIPTION_YEAR_NEW, OpenIabHelper.NAME_AMAZON, "subscription_unlock_all_year_3free");
-		OpenIabHelper.mapSku(SKU_SUBSCRIPTION_YEAR_CTRL, OpenIabHelper.NAME_AMAZON,
-				"subscription_unlock_all_year_controller");
-
-		OpenIabHelper.mapSku(SKU_SALE1, OpenIabHelper.NAME_AMAZON, "abc_sale_controller1_amazon");
-		OpenIabHelper.mapSku(SKU_SALE2, OpenIabHelper.NAME_AMAZON, "abc_sale_controller2_amazon");
-		OpenIabHelper.mapSku(SKU_PROMO, OpenIabHelper.NAME_AMAZON, "abc_promo_amazon");
-	}
+	// Billing removed - all features unlocked
 
 	public void activateCouponSale()
 	{
@@ -1906,126 +1838,12 @@ public class MainScreen extends ApplicationScreen
 
 	private void createBillingHandler()
 	{
-		try
-		{
-			final SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-
-			timeLastSubscriptionCheck = prefs.getLong("timeLastSubscriptionCheck", 0);
-			if ((System.currentTimeMillis() - timeLastSubscriptionCheck) > days32)
-				subscriptionStatusRequest = true;
-			else
-				subscriptionStatusRequest = false;
-
-			if ((isInstalled("com.almalence.hdr_plus")) || (isInstalled("com.almalence.pixfix")))
-			{
-				hdrPurchased = true;
-				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("plugin_almalence_hdr", true).commit();
-			}
-			if (isInstalled("com.almalence.panorama.smoothpanorama"))
-			{
-				panoramaPurchased = true;
-				Editor prefsEditor = prefs.edit();
-				prefsEditor.putBoolean("plugin_almalence_panorama", true).commit();
-			}
-			
-			
-			//>>>Yandex patch!!!
-//			{
-//				hdrPurchased = true;
-//				multishotsPurchased = true;
-//				Editor prefsEditor = prefs.edit();
-//				prefsEditor.putBoolean("plugin_almalence_hdr", true).commit();
-//				prefsEditor.putBoolean("plugin_almalence_moving_burst", true).commit();
-//			}
-			//<<<Yandex patch!!!
-			
-
-			String base64EncodedPublicKeyGoogle = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnztuXLNughHjGW55Zlgicr9r5bFP/K5DBc3jYhnOOo1GKX8M2grd7+SWeUHWwQk9lgQKat/ITESoNPE7ma0ZS1Qb/VfoY87uj9PhsRdkq3fg+31Q/tv5jUibSFrJqTf3Vmk1l/5K0ljnzX4bXI0p1gUoGd/DbQ0RJ3p4Dihl1p9pJWgfI9zUzYfvk2H+OQYe5GAKBYQuLORrVBbrF/iunmPkOFN8OcNjrTpLwWWAcxV5k0l5zFPrPVtkMZzKavTVWZhmzKNhCvs1d8NRwMM7XMejzDpI9A7T9egl6FAN4rRNWqlcZuGIMVizJJhvOfpCLtY971kQkYNXyilD40fefwIDAQAB";
-			String base64EncodedPublicKeyYandex = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA6KzaraKmv48Y+Oay2ZpWu4BHtSKYZidyCxbaYZmmOH4zlRNic/PDze7OA4a1buwdrBg3AAHwfVbHFzd9o91yinnHIWYQqyPg7L1Swh5W70xguL4jlF2N/xI9VoL4vMRv3Bf/79VfQ11utcPLHEXPR8nPEp9PT0wN2Hqp4yCWFbfvhVVmy7sQjywnfLqcWTcFCT6N/Xdxs1quq0hTE345MiCgkbh1xVULmkmZrL0rWDVCaxfK4iZWSRgQJUywJ6GMtUh+FU6/7nXDenC/vPHqnDR0R6BRi+QsES0ZnEfQLqNJoL+rqJDr/sDIlBQQDMQDxVOx0rBihy/FlHY34UF+bwIDAQAB";
-			// Create the helper, passing it our context and the public key to
-			// verify signatures with
-			Map<String, String> storeKeys = new HashMap<String, String>();
-			storeKeys.put(OpenIabHelper.NAME_GOOGLE, base64EncodedPublicKeyGoogle);
-			storeKeys.put("com.yandex.store", base64EncodedPublicKeyYandex);
-
-			OpenIabHelper.Options.Builder builder = new OpenIabHelper.Options.Builder()
-					.setStoreSearchStrategy(OpenIabHelper.Options.SEARCH_STRATEGY_INSTALLER_THEN_BEST_FIT)
-					.setVerifyMode(OpenIabHelper.Options.VERIFY_EVERYTHING).addStoreKeys(storeKeys);
-
-			mHelper = new OpenIabHelper(this, builder.build());
-
-			OpenIabHelper.enableDebugLogging(true);
-
-			mHelper.startSetup(new IabHelper.OnIabSetupFinishedListener()
-			{
-				public void onIabSetupFinished(IabResult result)
-				{
-					try
-					{
-						Log.v("Main billing", "Setup finished.");
-
-						if (!result.isSuccess())
-						{
-							Log.v("Main billing", "Problem setting up in-app billing: " + result);
-							return;
-						}
-
-						List<String> additionalSkuList = new ArrayList<String>();
-						additionalSkuList.add(SKU_SUPER);
-						additionalSkuList.add(SKU_HDR);
-						additionalSkuList.add(SKU_PANORAMA);
-						additionalSkuList.add(SKU_UNLOCK_ALL);
-						additionalSkuList.add(SKU_UNLOCK_ALL_COUPON);
-						additionalSkuList.add(SKU_MOVING_SEQ);
-						additionalSkuList.add(SKU_GROUPSHOT);
-						additionalSkuList.add(SKU_SUBSCRIPTION_YEAR_CTRL);
-						additionalSkuList.add(SKU_PROMO);
-
-						if (subscriptionStatusRequest)
-						{
-							// subscription year
-							additionalSkuList.add(SKU_SUBSCRIPTION_YEAR);
-							additionalSkuList.add(SKU_SUBSCRIPTION_YEAR_NEW);
-							// reset subscription status
-							unlockAllSubscriptionYear = false;
-							prefs.edit().putBoolean("subscription_unlock_all_year", false).commit();
-
-							timeLastSubscriptionCheck = System.currentTimeMillis();
-							prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
-						}
-
-						// for sale
-						additionalSkuList.add(SKU_SALE1);
-						additionalSkuList.add(SKU_SALE2);
-
-						mHelper.queryInventoryAsync(true, additionalSkuList, mGotInventoryListener);
-					} catch (Exception e)
-					{
-						e.printStackTrace();
-						Log.e("Main billing", "onIabSetupFinished exception: " + e.getMessage());
-					}
-				}
-			});
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("Main billing", "createBillingHandler exception: " + e.getMessage());
-		}
+		// Billing removed - all features permanently unlocked
 	}
-
 	private void destroyBillingHandler()
 	{
-		try
-		{
-			if (mHelper != null)
-				mHelper.dispose();
-			mHelper = null;
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("Main billing", "destroyBillingHandler exception: " + e.getMessage());
-		}
+		// Billing removed
+	}
 	}
 
 	public static String						titleUnlockAll				= "$6.95";
@@ -2036,189 +1854,6 @@ public class MainScreen extends ApplicationScreen
 	public static String						titleUnlockMoving			= "$3.99";
 	public static String						titleUnlockGroup			= "$2.99";
 	public static String						titleSubscriptionYear		= "$4.99";
-
-	public static String						summary_SKU_PROMO			= "alyrom0nap";
-	IabHelper.QueryInventoryFinishedListener	mGotInventoryListener		= 
-			new IabHelper.QueryInventoryFinishedListener()
-			{
-				public void onQueryInventoryFinished(
-						IabResult result,
-						Inventory inventory)
-				{
-					if (inventory == null)
-					{
-						Log.e("Main billing",
-								"mGotInventoryListener inventory null ");
-						return;
-					}
-
-					SharedPreferences prefs = PreferenceManager
-							.getDefaultSharedPreferences(MainScreen
-									.getMainContext());
-
-					Editor prefsEditor = prefs.edit();
-					if (inventory
-							.hasPurchase(SKU_SUPER))
-					{
-						superPurchased = true;
-						prefsEditor
-								.putBoolean(
-										"plugin_almalence_super",
-										true).commit();
-					}
-					if (inventory.hasPurchase(SKU_HDR))
-					{
-						hdrPurchased = true;
-						prefsEditor.putBoolean(
-								"plugin_almalence_hdr",
-								true).commit();
-					}
-					if (inventory
-							.hasPurchase(SKU_PANORAMA))
-					{
-						panoramaPurchased = true;
-						prefsEditor
-								.putBoolean(
-										"plugin_almalence_panorama",
-										true).commit();
-					}
-					if (inventory
-							.hasPurchase(SKU_UNLOCK_ALL))
-					{
-						unlockAllPurchased = true;
-						prefsEditor.putBoolean(
-								"unlock_all_forever",
-								true).commit();
-					}
-					if (inventory
-							.hasPurchase(SKU_UNLOCK_ALL_COUPON))
-					{
-						unlockAllPurchased = true;
-						prefsEditor.putBoolean(
-								"unlock_all_forever",
-								true).commit();
-					}
-					if (inventory
-							.hasPurchase(SKU_MOVING_SEQ))
-					{
-						multishotsPurchased = true;
-						prefsEditor
-								.putBoolean(
-										"plugin_almalence_moving_burst",
-										true).commit();
-					}
-					if (inventory
-							.hasPurchase(SKU_GROUPSHOT))
-					{
-						multishotsPurchased = true;
-						prefsEditor
-								.putBoolean(
-										"plugin_almalence_moving_burst",
-										true).commit();
-					}
-					if (inventory
-							.hasPurchase(SKU_SUBSCRIPTION_YEAR))
-					{
-						unlockAllSubscriptionYear = true;
-						prefsEditor
-								.putBoolean(
-										"subscription_unlock_all_year",
-										true).commit();
-						unlockAllPurchased = true;
-						prefsEditor.putBoolean(
-								"unlock_all_forever",
-								true).commit();
-					}
-					if (inventory
-							.hasPurchase(SKU_SUBSCRIPTION_YEAR_NEW))
-					{
-						unlockAllSubscriptionYear = true;
-						prefsEditor
-								.putBoolean(
-										"subscription_unlock_all_year",
-										true).commit();
-						unlockAllPurchased = true;
-						prefsEditor.putBoolean(
-								"unlock_all_forever",
-								true).commit();
-					}
-
-					try
-					{
-						String[] separated = inventory
-								.getSkuDetails(
-										SKU_SALE1)
-								.getPrice().split(",");
-						int price1 = Integer
-								.valueOf(separated[0]);
-						String[] separated2 = inventory
-								.getSkuDetails(
-										SKU_SALE2)
-								.getPrice().split(",");
-						int price2 = Integer
-								.valueOf(separated2[0]);
-
-						if (price1 < price2)
-							bOnSale = true;
-						else
-							bOnSale = false;
-
-						prefsEditor.putBoolean(
-								"bOnSale", bOnSale)
-								.commit();
-					} catch (Exception e)
-					{
-						Log.e("Main billing SALE",
-								"No sale data available");
-						bOnSale = false;
-					}
-
-					try
-					{
-						titleUnlockAll = inventory
-								.getSkuDetails(
-										SKU_UNLOCK_ALL)
-								.getPrice();
-						titleUnlockAllCoupon = inventory
-								.getSkuDetails(
-										SKU_UNLOCK_ALL_COUPON)
-								.getPrice();
-						titleUnlockSuper = inventory
-								.getSkuDetails(
-										SKU_SUPER)
-								.getPrice();
-						titleUnlockHDR = inventory
-								.getSkuDetails(SKU_HDR)
-								.getPrice();
-						titleUnlockPano = inventory
-								.getSkuDetails(
-										SKU_PANORAMA)
-								.getPrice();
-						titleUnlockMoving = inventory
-								.getSkuDetails(
-										SKU_MOVING_SEQ)
-								.getPrice();
-						titleUnlockGroup = inventory
-								.getSkuDetails(
-										SKU_GROUPSHOT)
-								.getPrice();
-
-						titleSubscriptionYear = inventory
-								.getSkuDetails(
-										SKU_SUBSCRIPTION_YEAR_CTRL)
-								.getPrice();
-
-						summary_SKU_PROMO = inventory
-								.getSkuDetails(
-										SKU_PROMO)
-								.getDescription();
-					} catch (Exception e)
-					{
-						Log.e("Market",
-								"Error Getting data for store!!!!!!!!");
-					}
-				}
-			};
 
 	private static int							HDR_REQUEST					= 100;
 	private static int							SUPER_REQUEST				= 107;
@@ -2268,259 +1903,19 @@ public class MainScreen extends ApplicationScreen
 		return unlockAllSubscriptionYear;
 	}
 
-	public static void purchaseAll()
-	{
-		if (isPurchasedAll())
-			return;
 
-		// now will call store with abc unlocked
-		callStoreForUnlocked(thiz);
 
-		// TODO: this is for all other markets!!!!! Do not call store!!!
-		// String payload = "";
-		// try
-		// {
-		// mHelper.launchPurchaseFlow(MainScreen.thiz,
-		// isCouponSale()?SKU_UNLOCK_ALL_COUPON:SKU_UNLOCK_ALL, ALL_REQUEST,
-		// mPreferencePurchaseFinishedListener, payload);
-		// }
-		// catch (Exception e) {
-		// e.printStackTrace();
-		// Log.e("Main billing", "Purchase result " + e.getMessage());
-		// Toast.makeText(MainScreen.thiz,
-		// "Error during purchase " + e.getMessage(),
-		// Toast.LENGTH_LONG).show();
-		// }
-	}
 
-	public void purchaseSuper()
-	{
-		if (isPurchasedSuper() || isPurchasedAll())
-			return;
-		String payload = "";
-		try
-		{
-			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_SUPER, SUPER_REQUEST, mPreferencePurchaseFinishedListener,
-					payload);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("Main billing", "Purchase result " + e.getMessage());
-			Toast.makeText(MainScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-		}
-	}
 
-	public void purchaseHDR()
-	{
-		if (isPurchasedHDR() || isPurchasedAll())
-			return;
-		String payload = "";
-		try
-		{
-			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_HDR, HDR_REQUEST, mPreferencePurchaseFinishedListener,
-					payload);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("Main billing", "Purchase result " + e.getMessage());
-			Toast.makeText(MainScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-		}
-	}
 
-	public void purchasePanorama()
-	{
-		if (isPurchasedPanorama() || isPurchasedAll())
-			return;
-		String payload = "";
-		try
-		{
-			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_PANORAMA, PANORAMA_REQUEST,
-					mPreferencePurchaseFinishedListener, payload);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("Main billing", "Purchase result " + e.getMessage());
-			Toast.makeText(MainScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-		}
-	}
-
-	public void purchaseMultishot()
-	{
-		if (isPurchasedMultishots() || isPurchasedAll())
-			return;
-		String payload = "";
-		try
-		{
-			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_MOVING_SEQ, OBJECTREM_BURST_REQUEST,
-					mPreferencePurchaseFinishedListener, payload);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("Main billing", "Purchase result " + e.getMessage());
-			Toast.makeText(MainScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-		}
-	}
-
-	public static void purchasedUnlockAllSubscriptionYear()
-	{
-		if (isPurchasedUnlockAllSubscriptionYear() || isPurchasedAll())
-			return;
-		String payload = "";
-		try
-		{
-			mHelper.launchPurchaseFlow(MainScreen.thiz, SKU_SUBSCRIPTION_YEAR_NEW, SUBSCRIPTION_YEAR_REQUEST,
-					mPreferencePurchaseFinishedListener, payload);
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Log.e("Main billing", "Purchase result " + e.getMessage());
-			Toast.makeText(MainScreen.thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-		}
-	}
 
 	// Callback for when purchase from preferences is finished
-	protected static IabHelper.OnIabPurchaseFinishedListener	mPreferencePurchaseFinishedListener	= new IabHelper.OnIabPurchaseFinishedListener()
-																									{
-																										public void onIabPurchaseFinished(
-																												IabResult result,
-																												Purchase purchase)
-																										{
-																											showStore = true;
-																											purchaseFinished(
-																													result,
-																													purchase);
-																										}
-																									};
-
-	private static void purchaseFinished(IabResult result, Purchase purchase)
-	{
-		Log.v("Main billing", "Purchase finished: " + result + ", purchase: " + purchase);
-		if (result.isFailure())
-		{
-			Log.v("Main billing", "Error purchasing: " + result);
-			return;
-		}
-
-		Log.v("Main billing", "Purchase successful.");
-
-		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(MainScreen.getMainContext());
-
-		if (purchase.getSku().equals(SKU_HDR))
-		{
-			Log.v("Main billing", "Purchase HDR.");
-			hdrPurchased = true;
-
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("plugin_almalence_hdr", true).commit();
-		}
-		if (purchase.getSku().equals(SKU_SUPER))
-		{
-			Log.v("Main billing", "Purchase SUPER.");
-			superPurchased = true;
-
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("plugin_almalence_super", true).commit();
-		}
-		if (purchase.getSku().equals(SKU_PANORAMA))
-		{
-			Log.v("Main billing", "Purchase Panorama.");
-			panoramaPurchased = true;
-
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("plugin_almalence_panorama", true).commit();
-		}
-		if (purchase.getSku().equals(SKU_UNLOCK_ALL))
-		{
-			Log.v("Main billing", "Purchase unlock_all_forever.");
-			unlockAllPurchased = true;
-
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("unlock_all_forever", true).commit();
-		}
-		if (purchase.getSku().equals(SKU_UNLOCK_ALL_COUPON))
-		{
-			Log.v("Main billing", "Purchase unlock_all_forever_coupon.");
-			unlockAllPurchased = true;
-
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("unlock_all_forever", true).commit();
-		}
-		if (purchase.getSku().equals(SKU_MOVING_SEQ))
-		{
-			Log.v("Main billing", "Purchase plugin_almalence_moving_burst.");
-			multishotsPurchased = true;
-
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("plugin_almalence_moving_burst", true).commit();
-		}
-		if (purchase.getSku().equals(SKU_GROUPSHOT))
-		{
-			Log.v("Main billing", "Purchase plugin_almalence_moving_burst.");
-			multishotsPurchased = true;
-
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("plugin_almalence_moving_burst", true).commit();
-		}
-		if (purchase.getSku().equals(SKU_SUBSCRIPTION_YEAR))
-		{
-			Log.v("Main billing", "Purchase year subscription.");
-			unlockAllSubscriptionYear = true;
-
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("subscription_unlock_all_year", true).commit();
-
-			timeLastSubscriptionCheck = System.currentTimeMillis();
-			prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
-
-			unlockAllPurchased = true;
-			prefsEditor.putBoolean("unlock_all_forever", true).commit();
-		}
-		if (purchase.getSku().equals(SKU_SUBSCRIPTION_YEAR_NEW))
-		{
-			Log.v("Main billing", "Purchase year subscription.");
-			unlockAllSubscriptionYear = true;
-
-			Editor prefsEditor = prefs.edit();
-			prefsEditor.putBoolean("subscription_unlock_all_year", true).commit();
-
-			timeLastSubscriptionCheck = System.currentTimeMillis();
-			prefs.edit().putLong("timeLastSubscriptionCheck", timeLastSubscriptionCheck).commit();
-
-			unlockAllPurchased = true;
-			prefsEditor.putBoolean("unlock_all_forever", true).commit();
-		}
-	}
-
-	public static void launchPurchase(int requestID)
-	{
-		try
-		{
-			thiz.guiManager.showStore();
-		} catch (Exception e)
-		{
-			e.printStackTrace();
-			Toast.makeText(thiz, "Error during purchase " + e.getMessage(), Toast.LENGTH_LONG).show();
-		}
-	}
-
-	IabHelper.OnIabPurchaseFinishedListener	mPurchaseFinishedListener	= new IabHelper.OnIabPurchaseFinishedListener()
-																		{
-																			public void onIabPurchaseFinished(
-																					IabResult result, Purchase purchase)
-																			{
-
-																				guiManager.showStore();
-																				purchaseFinished(result, purchase);
-																			}
-																		};
-
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		Log.v("Main billing", "onActivityResult(" + requestCode + "," + resultCode + "," + data);
 
 		// Pass on the activity result to the helper for handling
-		if (!mHelper.handleActivityResult(requestCode, resultCode, data))
 		{
 			// not handled, so handle it ourselves (here's where you'd
 			// perform any handling of activity results not related to in-app
@@ -2568,7 +1963,6 @@ public class MainScreen extends ApplicationScreen
 		{
 			public void onClick(View v)
 			{
-				String[] sep = MainScreen.summary_SKU_PROMO.split(";");
 				String promo = editText.getText().toString();
 				boolean matchPromo = false;
 
@@ -2707,7 +2101,6 @@ public class MainScreen extends ApplicationScreen
 			if ((1 == launchesLeft) || (3 == launchesLeft))
 			{
 				// show internal store
-				launchPurchase(100);
 			}
 			return true;
 		}
@@ -2768,7 +2161,6 @@ public class MainScreen extends ApplicationScreen
 
 			if ((1 == launchesLeft) || (2 == launchesLeft) || (3 == launchesLeft))
 				// show internal store
-				launchPurchase(100);
 		}
 		return true;
 	}
