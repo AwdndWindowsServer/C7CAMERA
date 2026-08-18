@@ -1515,10 +1515,6 @@ public class AlmalenceGUI extends GUI implements SeekBar.OnSeekBarChangeListener
 		else
 			guiView.findViewById(R.id.hintLayout).setVisibility(View.VISIBLE);
 
-		// <!-- -+-
-		manageUnlockControl();
-		// -+- -->
-
 		// Create select mode button with appropriate icon
 		createMergedSelectModeButton();
 		
